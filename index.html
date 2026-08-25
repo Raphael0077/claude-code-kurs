@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code, Kapitel für Kapitel</title>
+<meta name="description" content="Persönlicher Lernbegleiter zu Claude Code – 14 Kapitel, je mit Kurzfassung, einsatzbereitem Prompt und Quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#f5f5f2;
+    --surface:#ffffff;
+    --surface-2:#f0f0ec;
+    --ink:#17181b;
+    --muted:#6a6c72;
+    --faint:#9a9ca1;
+    --border:#e3e3df;
+    --border-strong:#d3d3ce;
+    --accent:#df3222;
+    --accent-ink:#ffffff;
+    --accent-soft:#fbe9e6;
+    --ok:#1c7a49;
+    --ok-bg:#e7f4ec;
+    --ok-border:#bfe3cd;
+    --bad:#b42318;
+    --bad-bg:#fbeae7;
+    --bad-border:#f0c8c1;
+    --shadow:0 1px 2px rgba(20,20,25,.04), 0 8px 24px -14px rgba(20,20,25,.18);
+    --radius:14px;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --ground:#111114;
+      --surface:#1a1b1f;
+      --surface-2:#232429;
+      --ink:#ececea;
+      --muted:#9a9ca3;
+      --faint:#71737a;
+      --border:#2c2d33;
+      --border-strong:#3a3b42;
+      --accent:#ff5c48;
+      --accent-ink:#1a0a08;
+      --accent-soft:#311915;
+      --ok:#4fd18c;
+      --ok-bg:#12301f;
+      --ok-border:#1f5238;
+      --bad:#ff8272;
+      --bad-bg:#361614;
+      --bad-border:#5a2a24;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 30px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#111114;
+    --surface:#1a1b1f;
+    --surface-2:#232429;
+    --ink:#ececea;
+    --muted:#9a9ca3;
+    --faint:#71737a;
+    --border:#2c2d33;
+    --border-strong:#3a3b42;
+    --accent:#ff5c48;
+    --accent-ink:#1a0a08;
+    --accent-soft:#311915;
+    --ok:#4fd18c;
+    --ok-bg:#12301f;
+    --ok-border:#1f5238;
+    --bad:#ff8272;
+    --bad-bg:#361614;
+    --bad-border:#5a2a24;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 30px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size:16px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px}
+
+  /* ---------- top bar ---------- */
+  header.bar{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb, var(--ground) 86%, transparent);
+    backdrop-filter:saturate(1.4) blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .bar-in{display:flex;align-items:center;gap:14px;height:58px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.02em;font-size:15px}
+  .brand .dot{width:11px;height:11px;border-radius:3px;background:var(--accent);flex:none}
+  .bar-spacer{flex:1}
+  .progress-pill{
+    display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);
+    font-variant-numeric:tabular-nums;
+  }
+  .progress-track{width:74px;height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border)}
+  .progress-fill{height:100%;width:0;background:var(--accent);transition:width .35s ease}
+  .icon-btn{
+    appearance:none;border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    width:36px;height:36px;border-radius:9px;cursor:pointer;display:grid;place-items:center;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .icon-btn:hover{border-color:var(--border-strong)}
+  .icon-btn svg{width:17px;height:17px}
+  .icon-btn .moon{display:none}
+  :root[data-theme="dark"] .icon-btn .sun{display:none}
+  :root[data-theme="dark"] .icon-btn .moon{display:block}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .icon-btn .sun{display:none}
+    :root:not([data-theme="light"]) .icon-btn .moon{display:block}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:56px 0 30px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+    font-weight:600;margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--accent);border-radius:2px}
+  h1{
+    font-size:clamp(2.1rem,6vw,3.15rem);line-height:1.05;letter-spacing:-.035em;
+    font-weight:700;margin:0 0 18px;text-wrap:balance;
+  }
+  .lede{font-size:1.12rem;color:var(--muted);max-width:60ch;margin:0 0 8px}
+  .lede strong{color:var(--ink);font-weight:600}
+
+  /* how-to legend */
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .legend .chip{
+    display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);
+    padding:9px 13px;border-radius:10px;font-size:13.5px;box-shadow:var(--shadow);
+  }
+  .legend .chip b{font-weight:600}
+  .legend .chip span{color:var(--muted)}
+  .legend .mk{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex:none;color:#fff}
+  .mk.sum{background:#5b6472}
+  .mk.pr{background:var(--accent)}
+  .mk.qz{background:#2f7d55}
+  .legend .mk svg{width:13px;height:13px}
+
+  /* ---------- chapter index ---------- */
+  .index-block{margin:36px 0 10px}
+  .index-title{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:0 0 14px}
+  .index-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+  .index-grid a{
+    position:relative;display:flex;flex-direction:column;justify-content:center;gap:2px;
+    aspect-ratio:1/1;border:1px solid var(--border);border-radius:10px;background:var(--surface);
+    text-decoration:none;color:var(--ink);padding:8px;transition:border-color .15s, transform .15s;
+  }
+  .index-grid a:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .index-grid a .n{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .index-grid a.done::after{
+    content:"";position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;
+    background:var(--ok);box-shadow:0 0 0 2px var(--surface);
+  }
+
+  /* ---------- chapters ---------- */
+  main{padding:26px 0 40px}
+  .chapters{display:flex;flex-direction:column;gap:14px}
+  details.ch{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:74px;
+  }
+  details.ch[open]{border-color:var(--border-strong)}
+  summary.ch-head{
+    list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:16px;
+    padding:18px 20px;user-select:none;
+  }
+  summary.ch-head::-webkit-details-marker{display:none}
+  .ch-num{
+    flex:none;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;
+    color:var(--accent);background:var(--accent-soft);border-radius:8px;
+    width:38px;height:38px;display:grid;place-items:center;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .ch-headtext{flex:1;min-width:0}
+  .ch-title{font-size:1.12rem;font-weight:600;letter-spacing:-.02em;margin:2px 0 3px;line-height:1.25}
+  .ch-teaser{font-size:13.5px;color:var(--muted);line-height:1.5}
+  details[open] .ch-teaser{display:none}
+  .ch-chev{flex:none;color:var(--faint);margin-top:8px;transition:transform .2s ease}
+  details[open] .ch-chev{transform:rotate(180deg)}
+  .ch-chev svg{width:18px;height:18px;display:block}
+
+  .ch-body{padding:2px 20px 22px;animation:reveal .28s ease}
+  @keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.ch-body{animation:none}}
+  .ch-body p.summary{margin:0 0 20px;color:var(--ink);max-width:64ch}
+
+  .sect-label{
+    display:flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--faint);font-weight:600;margin:0 0 9px;
+  }
+  .sect-label .mk{width:18px;height:18px;border-radius:5px}
+  .sect-label .mk svg{width:11px;height:11px}
+
+  /* prompt box */
+  .prompt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 9px}
+  .prompt-head .sect-label{margin:0}
+  .prompt{
+    background:var(--surface-2);border:1px solid var(--border);border-radius:11px;
+    padding:15px 16px;margin:0 0 22px;
+  }
+  .prompt pre{
+    margin:0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.6;
+    color:var(--ink);white-space:pre-wrap;word-break:break-word;
+  }
+  .copy-btn{
+    flex:none;display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);
+    font-family:inherit;font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px;cursor:pointer;
+    transition:all .15s ease;
+  }
+  .copy-btn:hover{color:var(--ink);border-color:var(--ink)}
+  .copy-btn.done{color:var(--ok);border-color:var(--ok-border);background:var(--ok-bg)}
+  .copy-btn svg{width:13px;height:13px}
+
+  /* quiz */
+  .quiz{background:var(--surface);border:1px dashed var(--border-strong);border-radius:11px;padding:15px 16px}
+  .quiz .q{font-weight:600;margin:0 0 12px;font-size:.98rem}
+  .quiz .opts{display:flex;flex-direction:column;gap:8px}
+  .quiz button.opt{
+    text-align:left;font-family:inherit;font-size:14px;color:var(--ink);
+    background:var(--surface-2);border:1px solid var(--border);border-radius:9px;
+    padding:10px 13px;cursor:pointer;transition:all .13s ease;display:flex;gap:10px;align-items:flex-start;
+  }
+  .quiz button.opt:hover:not(:disabled){border-color:var(--border-strong)}
+  .quiz button.opt .key{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);flex:none;margin-top:1px}
+  .quiz button.opt:disabled{cursor:default}
+  .quiz button.opt.correct{background:var(--ok-bg);border-color:var(--ok-border);color:var(--ink)}
+  .quiz button.opt.correct .key{color:var(--ok)}
+  .quiz button.opt.wrong{background:var(--bad-bg);border-color:var(--bad-border)}
+  .quiz button.opt.wrong .key{color:var(--bad)}
+  .quiz .explain{
+    margin:12px 0 0;font-size:13.5px;color:var(--muted);padding-left:12px;
+    border-left:2px solid var(--ok-border);display:none;
+  }
+  .quiz .explain.show{display:block}
+  .quiz .explain b{color:var(--ink);font-weight:600}
+
+  .ch-foot{display:flex;align-items:center;justify-content:flex-end;margin-top:18px}
+  .done-toggle{
+    display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px;color:var(--muted);
+    user-select:none;
+  }
+  .done-toggle .box{
+    width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border-strong);
+    display:grid;place-items:center;transition:all .15s ease;color:transparent;
+  }
+  .done-toggle.on .box{background:var(--ok);border-color:var(--ok);color:#fff}
+  .done-toggle.on{color:var(--ink)}
+  .done-toggle .box svg{width:12px;height:12px}
+
+  /* footer */
+  footer{border-top:1px solid var(--border);padding:34px 0 60px;color:var(--muted);font-size:13.5px}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  footer .foot-grid{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:flex-start}
+  .reset-btn{background:none;border:none;color:var(--faint);font-family:inherit;font-size:12.5px;cursor:pointer;padding:0;text-decoration:underline}
+  .reset-btn:hover{color:var(--accent)}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  noscript .ns{background:var(--accent-soft);border:1px solid var(--accent);padding:12px 16px;border-radius:10px;margin:14px 0;display:block}
+
+  @media (max-width:560px){
+    .hero{padding:40px 0 22px}
+    summary.ch-head{padding:15px 15px;gap:12px}
+    .ch-body{padding:2px 15px 18px}
+    .progress-pill .lbl{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <div class="brand"><span class="dot"></span> Claude Code · Lernbegleiter</div>
+    <div class="bar-spacer"></div>
+    <div class="progress-pill" title="Als erledigt markierte Kapitel">
+      <span class="lbl">Fortschritt</span>
+      <span class="progress-track"><span class="progress-fill" id="pfill"></span></span>
+      <span id="pcount" aria-live="polite">0/14</span>
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Hell/Dunkel umschalten" title="Hell/Dunkel">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow">14 Kapitel · Deutsch</span>
+    <h1>Claude Code, Kapitel für Kapitel</h1>
+    <p class="lede">Dein persönlicher Spickzettel zum ganzen Kurs. Jedes Kapitel in <strong>zwei, drei Sätzen</strong> – dazu ein <strong>fertiger Prompt</strong>, den du direkt in Claude einfügst, und eine kurze <strong>Quizfrage</strong> zum Selbsttest.</p>
+
+    <div class="legend">
+      <div class="chip"><span class="mk sum"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><b>Kurzfassung</b>&nbsp;<span>das Wichtigste</span></div>
+      <div class="chip"><span class="mk pr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-4 6 4 6M16 6l4 6-4 6"/></svg></span><b>Prompt</b>&nbsp;<span>zum Kopieren</span></div>
+      <div class="chip"><span class="mk qz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9a3 3 0 1 1 4 2.8c-.9.4-1 1-1 1.7M12 17h.01"/></svg></span><b>Quiz</b>&nbsp;<span>prüf dich</span></div>
+    </div>
+
+    <noscript><span class="ns">Diese Seite nutzt JavaScript für Kopier-Buttons, Quiz und Fortschritt. Bitte JavaScript aktivieren.</span></noscript>
+
+    <div class="index-block">
+      <p class="index-title">Direkt zum Kapitel</p>
+      <div class="index-grid" id="indexGrid"></div>
+    </div>
+  </section>
+
+  <main>
+    <div class="chapters" id="chapters"></div>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      Persönlicher Lernbegleiter, erstellt für Raphael.<br>
+      Inhalt nacherzählt aus dem <a href="https://claude-code-kurs.netlify.app/" target="_blank" rel="noopener">Claude-Code-Kurs</a> · Stand&nbsp;2026.
+    </div>
+    <div style="text-align:right">
+      Fortschritt wird nur in deinem Browser gespeichert.<br>
+      <button class="reset-btn" id="resetBtn">Fortschritt zurücksetzen</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   Kapitel-Daten – hier kannst du Texte, Prompts und Quiz
+   jederzeit selbst anpassen.
+   ========================================================= */
+const kapitel = [
+  {
+    t: "Was ist Claude Code?",
+    teaser: "Chat, Cowork oder Terminal – drei Formen, ein Werkzeug.",
+    s: "Claude Code gibt es in drei Formen: als <b>Chat</b> (einfache Unterhaltung), als <b>Cowork</b> (Aufgaben mit deinen Dateien, in der Cloud) und als <b>Code</b> im Terminal (lokal auf deinem Rechner). Das «Harness»-Bild erklärt das Zusammenspiel: das KI-Modell ist der Motor, Claude Code das Auto drumherum – und du bist der Fahrer. Wichtig ist vor allem zu wissen, welche Form für welche Aufgabe passt.",
+    p: "Erkläre mir den Unterschied zwischen Claude im Chat, in Cowork und im Terminal (Claude Code). Nenne für jede Form ein konkretes Alltagsbeispiel und sag mir, welche ich für folgende Aufgabe nehmen sollte: [deine Aufgabe].",
+    q: "Welche Form läuft lokal auf deinem eigenen Rechner?",
+    o: ["Chat", "Cowork", "Terminal (Claude Code)"],
+    c: 2,
+    e: "Nur das <b>Terminal (Claude Code)</b> arbeitet direkt auf deiner Festplatte. Chat und Cowork laufen in der Cloud."
+  },
+  {
+    t: "Mindset: AI-native werden",
+    teaser: "Denk wie ein Manager, nicht wie ein Nutzer.",
+    s: "Der grösste Hebel ist nicht die Technik, sondern die Haltung: Behandle Claude wie ein Teammitglied, das du <b>führst und delegierst</b> («Manager-Mindset»), nicht wie einen Automaten. Erwarte nicht bei jedem Versuch sofort das perfekte Ergebnis, sondern lerne, klare Aufträge zu geben und nachzusteuern. Wer so denkt, holt aus dem Werkzeug ein Vielfaches heraus.",
+    p: "Ich will lernen, dich wie ein Manager statt wie eine Suchmaschine zu nutzen. Gib mir 5 konkrete Gewohnheiten, wie ich Aufgaben gut an dich delegiere, und zeig mir an einem Beispiel den Unterschied zwischen einem schlechten und einem guten Auftrag.",
+    q: "Was steckt hinter dem «Manager-Mindset»?",
+    o: ["Alles selbst Schritt für Schritt eintippen", "Aufgaben klar formulieren, delegieren und nachsteuern", "Immer das billigste Modell nehmen"],
+    c: 1,
+    e: "Du gibst die Richtung vor und <b>delegierst</b> – statt jeden einzelnen Schritt selbst zu machen."
+  },
+  {
+    t: "Setup, Modelle & Tokens",
+    teaser: "Installation, welches Modell wann, und was Tokens kosten.",
+    s: "Du kannst Claude Code über die <b>Desktop-App</b>, das <b>Terminal</b> oder <b>VS&nbsp;Code</b> nutzen; dazu kommen die Abo-Pläne (Pro, Max). Es gibt verschiedene Modelle – grob: Haiku ist schnell und günstig, Sonnet ausgewogen, Opus das stärkste. «Tokens» sind die Recheneinheit, mit der Verbrauch und Kosten gemessen werden.",
+    p: "Erkläre mir einfach, was Tokens sind und wie sie meine Kosten beeinflussen. Welches Modell (Haiku, Sonnet, Opus) soll ich für welche Art von Aufgabe nehmen? Gib mir eine kurze Faustregel für den Alltag.",
+    q: "Welches Modell ist tendenziell am schnellsten und günstigsten?",
+    o: ["Opus", "Sonnet", "Haiku"],
+    c: 2,
+    e: "<b>Haiku</b> ist das schnelle, günstige Modell; Opus ist das stärkste (und teuerste)."
+  },
+  {
+    t: "Prompting-Grundlagen",
+    teaser: "Vier Hebel für Aufträge, die beim ersten Mal sitzen.",
+    s: "Gute Ergebnisse hängen an vier Hebeln: eine <b>Rolle</b> geben («Du bist ein…»), <b>Kontext</b> liefern (worum geht's, für wen), auch sagen, was du <b>nicht</b> willst, und Claude das Ergebnis am Ende <b>prüfen</b> lassen. Je klarer der Auftrag, desto besser das Resultat – und desto weniger Runden brauchst du.",
+    p: "Hier ist eine Aufgabe, die ich dir geben will: [Aufgabe]. Bevor du sie löst: Formuliere sie in einen richtig guten Prompt um, der Rolle, Kontext, klare Vorgaben und einen Prüfschritt enthält. Erkläre mir kurz, warum du was ergänzt hast.",
+    q: "Was gehört NICHT zu den vier Prompting-Hebeln?",
+    o: ["Rolle geben", "Kontext liefern", "Möglichst viele Emojis", "Ergebnis prüfen lassen"],
+    c: 2,
+    e: "Die vier Hebel sind Rolle, Kontext, sagen was du nicht willst, und Verifikation. Emojis gehören nicht dazu."
+  },
+  {
+    t: "CLAUDE.md & Settings",
+    teaser: "Das Projektgedächtnis – und wer was darf.",
+    s: "Die Datei <b>CLAUDE.md</b> ist das «Projektgedächtnis»: Was du dort hineinschreibst, weiss Claude bei jeder Aufgabe automatisch – ohne dass du es jedes Mal wiederholst. Im <b>.claude</b>-Ordner steuerst du zudem die Berechtigungen (Permission-Modi wie Auto, Plan, Manual), also wie viel Claude ohne Rückfrage tun darf.",
+    p: "Erkläre mir, was eine CLAUDE.md-Datei ist und wozu sie gut ist. Hilf mir dann, eine erste zu schreiben: Stell mir dazu 5 Fragen über mich und meine Arbeitsweise und erstelle daraus die fertige Datei.",
+    q: "Wozu dient die CLAUDE.md?",
+    o: ["Als Passwort-Speicher", "Als Gedächtnis, das Claude bei jeder Aufgabe automatisch kennt", "Als Rechnung fürs Abo"],
+    c: 1,
+    e: "Sie hält Dauer-Infos fest, die Claude <b>bei jeder Aufgabe automatisch</b> mitliest."
+  },
+  {
+    t: "Tools verbinden",
+    teaser: "MCP, Connectors, API-Keys – Claude an deine Welt andocken.",
+    s: "Claude kann mit externen Diensten verbunden werden – über <b>MCP</b> (ein Standard, um Werkzeuge anzudocken), über <b>Connectors</b> (per Klick in der App) oder über <b>API-Keys</b>, die du sicher in einer <code>.env</code>-Datei ablegst. So kann Claude zum Beispiel deine Mails, deinen Kalender oder Recherche-Tools nutzen.",
+    p: "Ich möchte Claude mit externen Tools verbinden. Erkläre mir einfach den Unterschied zwischen MCP, Connectors und API-Keys. Welche Verbindung brauche ich, wenn ich Folgendes nutzen will: [z.B. meine E-Mails / meinen Kalender / eine Recherche-Funktion]?",
+    q: "Was ist MCP?",
+    o: ["Ein Standard, um externe Werkzeuge an Claude anzudocken", "Ein Bezahlplan", "Ein Textformat für Notizen"],
+    c: 0,
+    e: "<b>MCP</b> (Model Context Protocol) ist der Standard, über den Werkzeuge an Claude angebunden werden."
+  },
+  {
+    t: "Skills",
+    teaser: "Wiederverwendbare Rezepte für wiederkehrende Aufgaben.",
+    s: "Skills sind wiederverwendbare <b>«Rezepte»</b> als Markdown-Datei: einmal aufgeschrieben, wendet Claude sie immer gleich an. Sie werden entweder automatisch bei passenden Aufgaben aktiv oder auf deine ausdrückliche Bitte hin. So werden wiederkehrende Aufgaben konsistent, ohne dass du jedes Mal alles neu erklärst.",
+    p: "Erkläre mir an einem Beispiel, was ein Skill ist und wann er sich lohnt. Ich mache oft folgende Aufgabe: [Aufgabe]. Baue mir daraus einen Skill und erkläre mir, wie ich ihn speichere und später wieder nutze.",
+    q: "Was ist ein Skill?",
+    o: ["Eine einmalige Frage", "Ein wiederverwendbares Rezept, das Claude immer gleich anwendet", "Ein Video-Tutorial"],
+    c: 1,
+    e: "Ein Skill ist ein festgehaltenes <b>Rezept</b>, das Claude bei passenden Aufgaben immer gleich abarbeitet."
+  },
+  {
+    t: "Context & Memory",
+    teaser: "Kurzzeitgedächtnis, «Dumb Zone» und der /clear-Trick.",
+    s: "Das <b>Kontextfenster</b> ist Claudes Kurzzeitgedächtnis für ein Gespräch – sehr gross, aber nicht unendlich. Wird es zu voll, sinkt die Qualität (die «Dumb Zone»); dann hilft <code>/clear</code> für einen frischen Start. <b>Auto-Memory</b> kann Wichtiges über mehrere Gespräche hinweg behalten.",
+    p: "Erkläre mir, was das Kontextfenster ist und woran ich merke, dass es zu voll wird. Wann soll ich /clear nutzen und wann /compact? Gib mir eine einfache Faustregel für den Alltag.",
+    q: "Was tust du, wenn ein Gespräch zu voll wird und Claude «vergesslich» oder wirr wirkt?",
+    o: ["Den Rechner neu starten", "Mit /clear einen frischen Start machen", "Ein teureres Abo kaufen"],
+    c: 1,
+    e: "<code>/clear</code> leert das Kontextfenster und gibt dir einen sauberen Neustart."
+  },
+  {
+    t: "Sub-Agents & Teams",
+    teaser: "Aufgaben an Helfer mit eigenem Kopf delegieren.",
+    s: "Du kannst Aufgaben an <b>Sub-Agents</b> delegieren – Helfer mit eigenem, frischem Kontextfenster, die parallel arbeiten. Jeder kann eine eigene Rolle («Persona») haben. <b>Agent Teams</b> (experimentell) lassen mehrere davon sogar miteinander kommunizieren.",
+    p: "Erkläre mir, was Sub-Agents sind und wann sie sinnvoll sind. Nenne mir 3 konkrete Beispiele, wo sich das Delegieren an einen Sub-Agent lohnt, statt alles in einem einzigen Gespräch zu machen.",
+    q: "Welchen Vorteil hat ein Sub-Agent?",
+    o: ["Er hat ein eigenes, frisches Kontextfenster und arbeitet parallel", "Er ist immer gratis", "Er ersetzt dein Abo"],
+    c: 0,
+    e: "Ein Sub-Agent startet mit <b>frischem Kontext</b> und kann eine Teilaufgabe eigenständig, oft parallel, erledigen."
+  },
+  {
+    t: "Websites bauen",
+    teaser: "Fünf Tricks von der Idee zur fertigen Seite.",
+    s: "Claude kann komplette Webseiten bauen. Fünf Tricks helfen dabei: eine <b>CLAUDE.md</b> fürs Projekt, der <b>Frontend-Design-Skill</b>, die <b>Screenshot-Schleife</b> (Claude schaut sich das Ergebnis als Bild an und bessert nach), fertige <b>Komponenten klonen</b> und Bibliotheken wie 21st.dev nutzen.",
+    p: "Ich möchte eine einfache Webseite bauen: [Thema und Zweck]. Frag mich zuerst nach Ziel, Stil und Inhalt, mach dann einen Vorschlag und baue eine erste Version. Zeig mir zwischendurch, wie sie aussieht, und bessere nach.",
+    q: "Was ist die «Screenshot-Schleife»?",
+    o: ["Ein Bildschirmschoner", "Claude schaut sich das Ergebnis als Bild an und verbessert es selbst", "Eine Tastenkombination"],
+    c: 1,
+    e: "Claude macht einen Screenshot der Seite, beurteilt ihn und <b>korrigiert selbstständig</b> – Runde um Runde."
+  },
+  {
+    t: "Vertrauen & Sicherheit",
+    teaser: "Zwei Ebenen, Berechtigungen und wie du «AI Slop» vermeidest.",
+    s: "Sicherheit passiert auf zwei Ebenen: was du in den <b>Prompt</b> schreibst, und was Claude an <b>Werkzeugen</b> tun darf (Tool-Ebene). Über Permission-Modi (Auto, Plan, Manual, Bypass) und begrenzte API-Keys steuerst du, wie viel Claude eigenständig darf. So vermeidest du «AI Slop» – also unkontrolliert schlechte, ungeprüfte Ergebnisse.",
+    p: "Erkläre mir einfach, wie ich sicher mit dir arbeite: Welche Permission-Modi gibt es und wann nehme ich welchen? Worauf muss ich bei API-Keys und sensiblen Daten achten? Gib mir eine kurze Checkliste.",
+    q: "Wofür sind Permission-Modi da?",
+    o: ["Um die Schriftgrösse zu ändern", "Um zu steuern, wie viel Claude ohne Rückfrage tun darf", "Um Tokens zu kaufen"],
+    c: 1,
+    e: "Sie legen fest, wie viel Claude <b>eigenständig</b> ausführen darf – von «fragt immer» bis «macht selbst»."
+  },
+  {
+    t: "Second Brain",
+    teaser: "Claude als persönlicher Wissensspeicher.",
+    s: "Du kannst Claude zu einem persönlichen <b>Wissensspeicher</b> ausbauen – vom simplen Ablegen von Notizen bis zu einem «Always-on»-System, das ständig mitdenkt. Ein Beispiel ist der <b>«Grill-Me»-Skill</b>, der dich gezielt interviewt, um dein implizites Wissen herauszuholen und festzuhalten.",
+    p: "Ich will dich als mein «zweites Gehirn» nutzen, um Wissen und Notizen zu sammeln. Schlag mir ein einfaches System vor, wie ich das aufbaue, und stell mir 5 Fragen, um gleich den Anfang zu machen.",
+    q: "Was macht der «Grill-Me»-Skill?",
+    o: ["Er löscht alte Notizen", "Er interviewt dich, um dein Wissen herauszuholen und festzuhalten", "Er kocht Rezepte"],
+    c: 1,
+    e: "Er stellt dir gezielte Fragen und <b>zieht dein implizites Wissen heraus</b>, damit es festgehalten wird."
+  },
+  {
+    t: "Automatisierungen",
+    teaser: "Claude erledigt Wiederkehrendes von selbst.",
+    s: "Claude kann Aufgaben von selbst ausführen – <b>zeitgesteuert</b> (z.B. jeden Morgen), per <b>Ereignis</b> (Webhook, GitHub-Event) oder als «Routine». Manche laufen lokal auf deinem Rechner, andere in der Cloud. So erledigt Claude wiederkehrende Dinge, ohne dass du jedes Mal dabei sein musst.",
+    p: "Ich möchte eine wiederkehrende Aufgabe automatisieren: [z.B. jeden Morgen eine Zusammenfassung meiner wichtigsten Mails]. Erkläre mir die Möglichkeiten (Zeit- oder Ereignis-Auslöser) und richte mir einen einfachen, konkreten Vorschlag ein.",
+    q: "Was ist ein zeitbasierter Auslöser (Trigger)?",
+    o: ["Eine Aufgabe, die Claude zu festgelegten Zeiten automatisch ausführt", "Ein Fehler im Programm", "Eine Taste auf der Tastatur"],
+    c: 0,
+    e: "Ein Zeit-Trigger startet eine Aufgabe <b>automatisch</b> nach Zeitplan – etwa jeden Morgen um 7 Uhr."
+  },
+  {
+    t: "Token-Spar-Hacks",
+    teaser: "Weniger Tokens, gleiche Qualität, tiefere Kosten.",
+    s: "Tokens kosten Geld, und mit ein paar Gewohnheiten sparst du spürbar: Gespräche mit <code>/clear</code> frisch halten, <b>Prompt Caching</b> nutzen und die «4&nbsp;C's» beachten (Context, Connections, Capabilities, Cadence). Der Kurs sammelt dazu 18 konkrete Spar-Hacks.",
+    p: "Gib mir die 5 wirkungsvollsten Tipps, um bei der Nutzung von Claude Tokens – und damit Geld – zu sparen, ohne dass die Qualität leidet. Erkläre jeden Tipp in einem Satz mit einem Alltagsbeispiel.",
+    q: "Warum lohnt es sich, /clear regelmässig zu nutzen?",
+    o: ["Es macht die Schrift grösser", "Es hält das Kontextfenster klein und spart so Tokens/Kosten", "Es schaltet Werbung ab"],
+    c: 1,
+    e: "Ein kleineres Kontextfenster heisst weniger mitgeschleppte Tokens – das <b>senkt die Kosten</b> und hält Claude scharf."
+  }
+];
+
+/* ---------- Render ---------- */
+const pad = n => String(n).padStart(2,"0");
+const chaptersEl = document.getElementById("chapters");
+const indexEl = document.getElementById("indexGrid");
+let doneSet = loadDone();
+
+kapitel.forEach((k, i) => {
+  const num = i + 1;
+  // index chip
+  const a = document.createElement("a");
+  a.href = "#kap-" + num;
+  a.id = "idx-" + num;
+  a.innerHTML = `<span class="n">${pad(num)}</span>`;
+  a.title = k.t;
+  indexEl.appendChild(a);
+
+  // chapter card
+  const d = document.createElement("details");
+  d.className = "ch";
+  d.id = "kap-" + num;
+
+  const opts = k.o.map((opt, oi) =>
+    `<button class="opt" data-i="${oi}"><span class="key">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`
+  ).join("");
+
+  d.innerHTML = `
+    <summary class="ch-head">
+      <span class="ch-num">${pad(num)}</span>
+      <span class="ch-headtext">
+        <span class="ch-title">${k.t}</span>
+        <span class="ch-teaser">${k.teaser}</span>
+      </span>
+      <span class="ch-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+    </summary>
+    <div class="ch-body">
+      <p class="summary">${k.s}</p>
+
+      <div class="prompt-head">
+        <div class="sect-label"><span class="mk pr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-4 6 4 6M16 6l4 6-4 6"/></svg></span> Prompt zum Einfügen</div>
+        <button class="copy-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Kopieren
+        </button>
+      </div>
+      <div class="prompt">
+        <pre>${k.p}</pre>
+      </div>
+
+      <div class="sect-label"><span class="mk qz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9a3 3 0 1 1 4 2.8c-.9.4-1 1-1 1.7M12 17h.01"/></svg></span> Kurzes Quiz</div>
+      <div class="quiz">
+        <p class="q">${k.q}</p>
+        <div class="opts">${opts}</div>
+        <p class="explain">${k.e}</p>
+      </div>
+
+      <div class="ch-foot">
+        <span class="done-toggle" role="button" tabindex="0" aria-pressed="false">
+          <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>
+          Als erledigt markieren
+        </span>
+      </div>
+    </div>
+  `;
+  chaptersEl.appendChild(d);
+
+  // copy
+  const copyBtn = d.querySelector(".copy-btn");
+  copyBtn.addEventListener("click", () => {
+    const text = k.p;
+    const ok = () => {
+      copyBtn.classList.add("done");
+      copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg> Kopiert!`;
+      setTimeout(() => {
+        copyBtn.classList.remove("done");
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Kopieren`;
+      }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok).catch(() => fallbackCopy(text, ok));
+    } else { fallbackCopy(text, ok); }
+  });
+
+  // quiz
+  const qBtns = d.querySelectorAll(".quiz .opt");
+  const explain = d.querySelector(".explain");
+  qBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+      const chosen = +btn.dataset.i;
+      qBtns.forEach(b => {
+        b.disabled = true;
+        const bi = +b.dataset.i;
+        if (bi === k.c) b.classList.add("correct");
+      });
+      if (chosen !== k.c) btn.classList.add("wrong");
+      explain.classList.add("show");
+    });
+  });
+
+  // done toggle
+  const toggle = d.querySelector(".done-toggle");
+  const setToggle = on => {
+    toggle.classList.toggle("on", on);
+    toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    toggle.lastChild.textContent = on ? " Erledigt" : " Als erledigt markieren";
+    a.classList.toggle("done", on);
+  };
+  setToggle(doneSet.has(num));
+  const flip = () => {
+    if (doneSet.has(num)) doneSet.delete(num); else doneSet.add(num);
+    setToggle(doneSet.has(num));
+    saveDone(doneSet); updateProgress();
+  };
+  toggle.addEventListener("click", flip);
+  toggle.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
+});
+
+function fallbackCopy(text, ok){
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); ok(); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+/* ---------- Progress + storage ---------- */
+const KEY = "cc-kurs-done";
+function loadDone(){
+  try { const r = localStorage.getItem(KEY); return new Set(r ? JSON.parse(r) : []); }
+  catch(e){ return new Set(); }
+}
+function saveDone(set){
+  try { localStorage.setItem(KEY, JSON.stringify([...set])); } catch(e){}
+}
+function updateProgress(){
+  const n = doneSet.size, total = kapitel.length;
+  document.getElementById("pcount").textContent = n + "/" + total;
+  document.getElementById("pfill").style.width = (n/total*100) + "%";
+}
+updateProgress();
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  doneSet = new Set(); saveDone(doneSet); updateProgress();
+  document.querySelectorAll(".done-toggle").forEach(t => {
+    t.classList.remove("on"); t.setAttribute("aria-pressed","false"); t.lastChild.textContent = " Als erledigt markieren";
+  });
+  document.querySelectorAll(".index-grid a").forEach(a => a.classList.remove("done"));
+});
+
+/* ---------- Theme toggle ---------- */
+const themeBtn = document.getElementById("themeBtn");
+try {
+  const saved = localStorage.getItem("cc-kurs-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+} catch(e){}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const isDark = cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const next = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("cc-kurs-theme", next); } catch(e){}
+});
+
+/* open chapter when navigating via index */
+window.addEventListener("hashchange", () => {
+  const el = document.querySelector(location.hash);
+  if (el && el.tagName === "DETAILS") el.open = true;
+});
+if (location.hash){ const el = document.querySelector(location.hash); if (el && el.tagName==="DETAILS") el.open = true; }
+</script>
+</body>
+</html>
